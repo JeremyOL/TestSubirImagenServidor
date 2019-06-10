@@ -1,0 +1,100 @@
+<html>
+
+<body>
+    <!-- <input id="imageFile" type="file">
+    <input type="button" value="Resize Image" onclick="ResizeImage()" />
+    <hr> -->
+    <input type="text" name="fileName">
+    <input type="file" id="imageFile" name="sampleFile" accept="image/png" />
+    <input type='button' value='Upload!' onclick="ResizeImage()" />
+    <img src="" id="output">
+    <div id="contenedor"></div>
+    <hr>
+
+    <script>
+
+        function ResizeImage() {
+            var filesToUpload = document.getElementById('imageFile').files;
+            var file = filesToUpload[0];
+            console.log('Data');
+
+
+            // Create an image
+            var img = document.createElement("img");
+            // Create a file reader
+            var reader = new FileReader();
+            // Set the image once loaded into file reader
+            reader.onload = function (e) {
+
+                img.onload = function () {
+                    console.log('done')
+                }
+                img.src = e.target.result;
+                console.log('src')
+
+                var canvas = document.createElement("canvas");
+                //var canvas = $("<canvas>", {"id":"testing"})[0];
+                var ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0);
+
+                // var MAX_WIDTH = 400;
+                // var MAX_HEIGHT = 400;
+                var width = 200;
+                var height = 200;
+
+                if (img.width > img.height) {
+                    if (img.width > width) {
+                        height *= height / img.width;
+                        //width = width;
+                    }
+                } else {
+                    if (img.height > height) {
+                        width *= height / img.height;
+                        //height = height;
+                    }
+                }
+                canvas.width = width;
+                canvas.height = height;
+                ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, width, height);
+
+                var dataurl = canvas.toDataURL("image/png");
+
+                // var dataurl = "data:,";
+                // while (dataurl == "data:,") {
+                //     dataurl = canvas.toDataURL("image/png");
+                //     console.log('Waiting');
+
+                // }
+
+                console.log(dataurl);
+                canvas.toBlob((blob) => {
+
+                    var fd = new FormData();
+                    fd.append("name", "paul");
+                    fd.append("image", blob);
+                    fd.append("key", "××××××××××××");
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST", "http://localhost:5000/2");
+                    xhr.send(fd);
+
+                }, "image/png", 1)
+
+                document.getElementById('output').src = dataurl;
+
+                var para = document.createElement("p");
+                var node = document.createTextNode(dataurl);
+                para.appendChild(node);
+                var element = document.getElementById("contenedor");
+                element.appendChild(para);
+
+            }
+            // Load files into file reader
+            reader.readAsDataURL(file);
+
+
+        }
+    </script>
+</body>
+
+</html>

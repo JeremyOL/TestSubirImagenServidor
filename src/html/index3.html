@@ -1,0 +1,72 @@
+<html>
+
+<body>
+    <!-- <input id="imageFile" type="file">
+    <input type="button" value="Resize Image" onclick="ResizeImage()" />
+    <hr> -->
+    <input type="text" id="fileName">
+    <input type="file" id="imageFile" accept="image/*"/>
+    <input type='button' value='Upload!' onclick="ResizeImage()" />
+    <img src="" id="output">
+    <div id="contenedor"></div>
+    <hr>
+
+    <script>
+
+        function ResizeImage() {
+            var filesToUpload = document.getElementById('imageFile').files;
+            var file = filesToUpload[0];
+
+            // Create an image
+            var img = document.createElement("img");
+            // Create a file reader
+            var reader = new FileReader();
+            // Set the image once loaded into file reader
+            reader.onload = function (e) {
+
+                img.onload = function () {
+                    console.log('done');
+                    var canvas = document.createElement("canvas");
+                    var ctx = canvas.getContext("2d");
+                    ctx.drawImage(img, 0, 0);
+
+                    var width = 200;
+                    var height = 200;
+
+                    if (img.width > img.height) {
+                        if (img.width > width) {
+                            height *= height / img.width;
+                        }
+                    } else {
+                        if (img.height > height) {
+                            width *= height / img.height;
+                        }
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx = canvas.getContext("2d");
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    var dataurl = canvas.toDataURL("image/png");
+
+                    canvas.toBlob((blob) => {
+                        var fd = new FormData();
+                        fd.append("fileName", document.getElementById("fileName").value);
+                        fd.append("sampleFile", blob);
+                        var xhr = new XMLHttpRequest();
+                        xhr.open("POST", "http://localhost:5000/upload");
+                        xhr.send(fd);
+
+                    }, "image/png", 1)
+
+                }
+                img.src = e.target.result;
+
+            }
+            // Load files into file reader
+            reader.readAsDataURL(file);
+        }
+    </script>
+</body>
+
+</html>
